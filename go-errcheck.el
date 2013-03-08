@@ -50,7 +50,7 @@ Note that this uses RE2 regex syntax, not Emacs regex syntax."
 
 
 (defun go-errcheck--compilation-hook (p)
-  (set (make-local-variable 'compilation-error-regexp-alist) '(("^\\(.+?\\):\\([[:digit:]]+\\):\\([[:digit:]]+\\) \t.+$" 1 2 3 1 1))))
+  (set (make-local-variable 'compilation-error-regexp-alist) '(("^\\(.+?\\):\\([[:digit:]]+\\):\\([[:digit:]]+\\) .+$" 1 2 3 1 1))))
 
 (defun go-errcheck--build-arguments ()
   (list (unless (string= "" go-errcheck-ignore)
