@@ -71,7 +71,9 @@ When called non-interactively, DIRECTORY, IGNOREPKG and IGNORE
 can be specified as arguments."
   (interactive
    (list
-    (file-name-directory buffer-file-name)
+    (if buffer-file-name
+        (file-name-directory buffer-file-name)
+      default-directory)
     (if current-prefix-arg
         (split-string
          (read-from-minibuffer "ignorepkg (Space-separated list of packages to ignore): ")
@@ -87,7 +89,7 @@ can be specified as arguments."
                                   (or ignore go-errcheck-ignore))
                        " ")
             " "
-            (shell-quote-argument directory)))
+            (shell-quote-argument (file-truename directory))))
   (remove-hook 'compilation-start-hook 'go-errcheck--compilation-hook))
 
 
