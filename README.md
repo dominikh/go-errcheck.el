@@ -10,7 +10,8 @@ presented in a compilation buffer, allowing navigating errors.
 ## Basic usage
 
 Basic usage is as simple as invoking the function `go-errcheck` in a
-Go buffer.
+Go buffer. Calling `go-errcheck` with a prefix argument allows setting
+the `ignorepkg` and `ignore` flags interactively.
 
 ## Customizations
 

@@ -52,23 +52,42 @@ Note that this uses RE2 regex syntax, not Emacs regex syntax."
 (defun go-errcheck--compilation-hook (p)
   (set (make-local-variable 'compilation-error-regexp-alist) '(("^\\(.+?\\):\\([[:digit:]]+\\):\\([[:digit:]]+\\) .+$" 1 2 3 1 1))))
 
-(defun go-errcheck--build-arguments ()
-  (list (unless (string= "" go-errcheck-ignore)
-          (concat "-ignore=\"" (shell-quote-argument go-errcheck-ignore)  "\""))
-        (if go-errcheck-ignorepkg
-            (concat "-ignorepkg=\"" (mapconcat 'identity go-errcheck-ignorepkg ",") "\""))))
+(defun go-errcheck--build-arguments (ignorepkg ignore)
+  (list (unless (string= "" ignore)
+          (concat "-ignore=\"" (shell-quote-argument ignore)  "\""))
+        (if ignorepkg
+            (concat "-ignorepkg=\"" (mapconcat 'identity ignorepkg ",") "\""))))
 
 ;;;###autoload
-(defun go-errcheck ()
+(defun go-errcheck (directory ignorepkg ignore)
   "Run errcheck on the current buffer's directory and display the
-  output in a compilation buffer."
-  (interactive)
+  output in a compilation buffer.
+
+If ARG is non-nil, go-errcheck will query for the values of
+IGNOREPKG and IGNORE which will override any defaults or file
+local variables.
+
+When called non-interactively, DIRECTORY, IGNOREPKG and IGNORE
+can be specified as arguments."
+  (interactive
+   (list
+    (file-name-directory buffer-file-name)
+    (if current-prefix-arg
+        (split-string
+         (read-from-minibuffer "ignorepkg (Space-separated list of packages to ignore): ")
+         " "))
+    (if current-prefix-arg
+        (read-from-minibuffer "ignore (RE2 regexp to ignore functions): "))))
+  (message "%s %s" ignorepkg ignore)
   (add-hook 'compilation-start-hook 'go-errcheck--compilation-hook)
   (compile (concat
             "errcheck "
-            (mapconcat 'identity (go-errcheck--build-arguments) " ")
+            (mapconcat 'identity (go-errcheck--build-arguments
+                                  (or ignorepkg go-errcheck-ignorepkg)
+                                  (or ignore go-errcheck-ignore))
+                       " ")
             " "
-            (shell-quote-argument (file-name-directory buffer-file-name))))
+            (shell-quote-argument directory)))
   (remove-hook 'compilation-start-hook 'go-errcheck--compilation-hook))
 
 
