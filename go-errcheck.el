@@ -80,7 +80,6 @@ can be specified as arguments."
          " "))
     (if current-prefix-arg
         (read-from-minibuffer "ignore (RE2 regexp to ignore functions): "))))
-  (message "%s %s" ignorepkg ignore)
   (add-hook 'compilation-start-hook 'go-errcheck--compilation-hook)
   (compile (concat
             "errcheck "
