@@ -27,3 +27,7 @@ per-directory variables might make more sense than using file local
 variables. They allow setting the `ignorepkg` and `ignore` flags for
 your packages so that errcheck will be invoked with them
 automatically.
+
+## Screenshot
+
+![Screenshot of go-errcheck](http://stuff.fork-bomb.org/screenshots/go-errcheck.png "go-errcheck displaying the filtered output of errchecking the fmt package")
