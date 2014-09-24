@@ -81,14 +81,31 @@ can be specified as arguments."
     (if current-prefix-arg
         (read-from-minibuffer "ignore (RE2 regexp to ignore functions): "))))
   (add-hook 'compilation-start-hook 'go-errcheck--compilation-hook)
-  (compile (concat
-            "errcheck "
-            (mapconcat 'identity (go-errcheck--build-arguments
-                                  (or ignorepkg go-errcheck-ignorepkg)
-                                  (or ignore go-errcheck-ignore))
-                       " ")
-            " "
-            (shell-quote-argument (file-truename directory))))
+  (cl-labels ((find-suffix (dir-path possible-pref)
+                           (or
+                            (cl-dolist (pref possible-pref)
+                              (when (= 0 (or (cl-search pref dir-path) -1))
+                                (cl-return
+                                 (subseq dir-path (length pref)))))
+                            dir-path))) ;no matching prefix found, return arg and let caller fail
+    (let ((possible-pref (mapcar
+                          (lambda (pref) (concat pref "/src/"))
+                          (mapcar
+                           #'file-truename ;resolve symbolic links etc
+                           (split-string (concat (getenv "GOROOT")
+                                                 path-separator
+                                                 (getenv "GOPATH"))
+                                         path-separator)))))
+      (compile (concat
+                "errcheck "
+                (mapconcat 'identity (go-errcheck--build-arguments
+                                      (or ignorepkg go-errcheck-ignorepkg)
+                                      (or ignore go-errcheck-ignore))
+                           " ")
+                " "
+                (shell-quote-argument (find-suffix
+                                       (file-truename directory)
+                                       possible-pref))))))
   (remove-hook 'compilation-start-hook 'go-errcheck--compilation-hook))
 
 
