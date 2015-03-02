@@ -3,7 +3,7 @@
 ;; Copyright (C) 2013 Dominik Honnef
 
 ;; Author: Dominik Honnef <dominikh@fork-bomb.org>
-;; Version: 1.0.0
+;; Version: 1.0.1
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -81,14 +81,14 @@ can be specified as arguments."
     (if current-prefix-arg
         (read-from-minibuffer "ignore (RE2 regexp to ignore functions): "))))
   (add-hook 'compilation-start-hook 'go-errcheck--compilation-hook)
-  (compile (concat
-            "errcheck "
-            (mapconcat 'identity (go-errcheck--build-arguments
-                                  (or ignorepkg go-errcheck-ignorepkg)
-                                  (or ignore go-errcheck-ignore))
-                       " ")
-            " "
-            (shell-quote-argument (file-truename directory))))
+  (let ((default-directory (file-name-directory (buffer-file-name))))
+    (compile (concat
+              "errcheck "
+              (mapconcat 'identity (go-errcheck--build-arguments
+                                    (or ignorepkg go-errcheck-ignorepkg)
+                                    (or ignore go-errcheck-ignore))
+                         " ")
+              " .")))
   (remove-hook 'compilation-start-hook 'go-errcheck--compilation-hook))
 
 
