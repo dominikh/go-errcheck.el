@@ -3,7 +3,7 @@
 ;; Copyright (C) 2013 Dominik Honnef
 
 ;; Author: Dominik Honnef <dominikh@fork-bomb.org>
-;; Version: 1.0.1
+;; Version: 1.0.2
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -50,7 +50,9 @@ Note that this uses RE2 regex syntax, not Emacs regex syntax."
 
 
 (defun go-errcheck--compilation-hook (p)
-  (set (make-local-variable 'compilation-error-regexp-alist) '(("^\\(.+?\\):\\([[:digit:]]+\\):\\([[:digit:]]+\\)[ \t].+$" 1 2 3 1 1))))
+  (set (make-local-variable 'compilation-error-regexp-alist)
+       (cons '("^\\(.+?\\):\\([[:digit:]]+\\):\\([[:digit:]]+\\)[ \t].+$" 1 2 3 1 1) compilation-error-regexp-alist)))
+
 
 (defun go-errcheck--build-arguments (ignorepkg ignore)
   (list (unless (string= "" ignore)
