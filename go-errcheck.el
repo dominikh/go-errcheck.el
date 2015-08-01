@@ -82,6 +82,35 @@ can be specified as arguments."
          " "))
     (if current-prefix-arg
         (read-from-minibuffer "ignore (RE2 regexp to ignore functions): "))))
+  (go--errcheck nil directory ignorepkg ignore))
+
+(defun go-errcheck-pkg (pkg directory ignorepkg ignore)
+  "Run errcheck on the package specified in PKG and display the
+output in a compilation buffer.
+
+PKG may either be a proper package name, or it may be a glob such
+as ./... – the latter will be relative to DIRECTORY. When called
+interactively, DIRECTORY will be the current buffer's directory.
+If PKG is nil, this function will behave identical to
+`go-errcheck'.
+
+For an explanation of the arguments other than PKG, see
+`go-errcheck'."
+  (interactive
+   (list
+    (read-from-minibuffer "pkg (Package name, or something like ./...)")
+    (if buffer-file-name
+        (file-name-directory buffer-file-name)
+      default-directory)
+    (if current-prefix-arg
+        (split-string
+         (read-from-minibuffer "ignorepkg (Space-separated list of packages to ignore): ")
+         " "))
+    (if current-prefix-arg
+        (read-from-minibuffer "ignore (RE2 regexp to ignore functions): "))))
+  (go--errcheck pkg directory ignorepkg ignore))
+
+(defun go--errcheck (pkg directory ignorepkg ignore)
   (add-hook 'compilation-start-hook 'go-errcheck--compilation-hook)
   (let ((default-directory directory))
     (compile (concat
@@ -90,9 +119,9 @@ can be specified as arguments."
                                     (or ignorepkg go-errcheck-ignorepkg)
                                     (or ignore go-errcheck-ignore))
                          " ")
-              " .")))
+              " "
+              pkg)))
   (remove-hook 'compilation-start-hook 'go-errcheck--compilation-hook))
-
 
 (provide 'go-errcheck)
 
