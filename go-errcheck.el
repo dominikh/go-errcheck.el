@@ -82,7 +82,8 @@ IGNOREPKG and IGNORE which will override any defaults or file
 local variables.
 
 When called non-interactively, DIRECTORY, IGNOREPKG and IGNORE
-can be specified as arguments."
+can be specified as arguments. If DIRECTORY is nil, it will
+default to the buffer's directory."
   (interactive (go-errcheck--common-arguments))
   (go--errcheck nil directory ignorepkg ignore))
 
@@ -105,6 +106,9 @@ For an explanation of the arguments other than PKG, see
   (go--errcheck pkg directory ignorepkg ignore))
 
 (defun go--errcheck (pkg directory ignorepkg ignore)
+  (setq directory (or directory (if buffer-file-name
+                                    (file-name-directory buffer-file-name)
+                                  default-directory)))
   (add-hook 'compilation-start-hook 'go-errcheck--compilation-hook)
   (let ((default-directory directory))
     (compile (concat
