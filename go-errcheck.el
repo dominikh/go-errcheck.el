@@ -60,6 +60,18 @@ Note that this uses RE2 regex syntax, not Emacs regex syntax."
         (if ignorepkg
             (concat "-ignorepkg=\"" (mapconcat 'identity ignorepkg ",") "\""))))
 
+(defun go-errcheck--common-arguments ()
+  (list
+   (if buffer-file-name
+       (file-name-directory buffer-file-name)
+     default-directory)
+   (if current-prefix-arg
+       (split-string
+        (read-from-minibuffer "Space-separated list of packages to ignore: ")
+        " "))
+   (if current-prefix-arg
+       (read-from-minibuffer "RE2 regexp for ignoring functions: "))))
+
 ;;;###autoload
 (defun go-errcheck (directory ignorepkg ignore)
   "Run errcheck on the current buffer's directory and display the
@@ -71,17 +83,7 @@ local variables.
 
 When called non-interactively, DIRECTORY, IGNOREPKG and IGNORE
 can be specified as arguments."
-  (interactive
-   (list
-    (if buffer-file-name
-        (file-name-directory buffer-file-name)
-      default-directory)
-    (if current-prefix-arg
-        (split-string
-         (read-from-minibuffer "Space-separated list of packages to ignore: ")
-         " "))
-    (if current-prefix-arg
-        (read-from-minibuffer "RE2 regexp for ignoring functions: "))))
+  (interactive (go-errcheck--common-arguments))
   (go--errcheck nil directory ignorepkg ignore))
 
 (defun go-errcheck-pkg (pkg directory ignorepkg ignore)
@@ -97,17 +99,9 @@ If PKG is nil, this function will behave identical to
 For an explanation of the arguments other than PKG, see
 `go-errcheck'."
   (interactive
-   (list
-    (read-from-minibuffer "Package name, or something like ./...: ")
-    (if buffer-file-name
-        (file-name-directory buffer-file-name)
-      default-directory)
-    (if current-prefix-arg
-        (split-string
-         (read-from-minibuffer "Space-separated list of packages to ignore: ")
-         " "))
-    (if current-prefix-arg
-        (read-from-minibuffer "RE2 regexp for ignoring functions: "))))
+   (append
+    (list (read-from-minibuffer "Package name, or something like ./...: "))
+    (go-errcheck--common-arguments)))
   (go--errcheck pkg directory ignorepkg ignore))
 
 (defun go--errcheck (pkg directory ignorepkg ignore)
