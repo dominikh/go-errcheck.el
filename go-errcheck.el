@@ -3,7 +3,7 @@
 ;; Copyright (C) 2013 Dominik Honnef
 
 ;; Author: Dominik Honnef <dominikh@fork-bomb.org>
-;; Version: 1.1.0
+;; Version: 1.1.1
 
 ;; This file is NOT part of GNU Emacs.
 
