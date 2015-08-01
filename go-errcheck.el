@@ -78,10 +78,10 @@ can be specified as arguments."
       default-directory)
     (if current-prefix-arg
         (split-string
-         (read-from-minibuffer "ignorepkg (Space-separated list of packages to ignore): ")
+         (read-from-minibuffer "Space-separated list of packages to ignore: ")
          " "))
     (if current-prefix-arg
-        (read-from-minibuffer "ignore (RE2 regexp to ignore functions): "))))
+        (read-from-minibuffer "RE2 regexp for ignoring functions: "))))
   (go--errcheck nil directory ignorepkg ignore))
 
 (defun go-errcheck-pkg (pkg directory ignorepkg ignore)
@@ -98,16 +98,16 @@ For an explanation of the arguments other than PKG, see
 `go-errcheck'."
   (interactive
    (list
-    (read-from-minibuffer "pkg (Package name, or something like ./...)")
+    (read-from-minibuffer "Package name, or something like ./...: ")
     (if buffer-file-name
         (file-name-directory buffer-file-name)
       default-directory)
     (if current-prefix-arg
         (split-string
-         (read-from-minibuffer "ignorepkg (Space-separated list of packages to ignore): ")
+         (read-from-minibuffer "Space-separated list of packages to ignore: ")
          " "))
     (if current-prefix-arg
-        (read-from-minibuffer "ignore (RE2 regexp to ignore functions): "))))
+        (read-from-minibuffer "RE2 regexp for ignoring functions: "))))
   (go--errcheck pkg directory ignorepkg ignore))
 
 (defun go--errcheck (pkg directory ignorepkg ignore)
