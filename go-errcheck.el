@@ -83,7 +83,7 @@ can be specified as arguments."
     (if current-prefix-arg
         (read-from-minibuffer "ignore (RE2 regexp to ignore functions): "))))
   (add-hook 'compilation-start-hook 'go-errcheck--compilation-hook)
-  (let ((default-directory (file-name-directory (buffer-file-name))))
+  (let ((default-directory directory))
     (compile (concat
               "errcheck "
               (mapconcat 'identity (go-errcheck--build-arguments
