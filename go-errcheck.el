@@ -112,7 +112,7 @@ For an explanation of the arguments other than PKG, see
   (add-hook 'compilation-start-hook 'go-errcheck--compilation-hook)
   (let ((default-directory directory))
     (compile (concat
-              "errcheck "
+              "errcheck -abspath "
               (mapconcat 'identity (go-errcheck--build-arguments
                                     (or ignorepkg go-errcheck-ignorepkg)
                                     (or ignore go-errcheck-ignore))
